@@ -1,0 +1,28 @@
+Metadata-Version: 2.2
+Name: multigrid
+Version: 0.1.0
+Summary: Fast multi-agent gridworld reinforcement learning environments.
+Author: Shengkang Chen
+License: Apache License
+Keywords: Memory, Environment, Agent, Multi-Agent, RL, Gymnasium, Cooperative, Competitive
+Classifier: Development Status :: 4 - Beta
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Intended Audience :: Science/Research
+Classifier: Topic :: Scientific/Engineering :: Artificial Intelligence
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+Requires-Dist: aenum>=1.3.0
+Requires-Dist: numba>=0.53.0
+Requires-Dist: numpy>=1.18.0
+Requires-Dist: gymnasium>=0.26
+Requires-Dist: pygame>=2.2.0
+
+# MultiGrid
+
+This is a modifiction of MultiGrid from https://github.com/ini/multigrid to be compatible wtih SKRL https://skrl.readthedocs.io/en/latest/
+
+
