@@ -171,6 +171,7 @@ class EmptyEnv(MultiGridEnv):
             goal_x = random.randint(2, width - 2)
             goal_y = random.randint(2, height - 2)
             self.put_obj(Goal(), goal_x, goal_y)
+            # print('place goal randomly: ',  goal_x, goal_y)
         # print('objects:', self.grid.obj_loc)
 
 

@@ -182,12 +182,12 @@ class MultiGridEnv(gym.Env, RandomMixin, ABC):
             raise ValueError(f"Invalid argument for agents: {agents}")
 
         # For SKRL (Shengkang)
-
-            
         self.agent_dict = {}
         for agent in self.agents:
             agent_name = agent.index
             self.agent_dict[agent_name] = agent
+            print('Agent', agent_name, agent.color)
+            
         self.possible_agents = list(self.agent_dict.keys())
         self.action_spaces = dict()
         self.observation_spaces = dict()
@@ -197,7 +197,6 @@ class MultiGridEnv(gym.Env, RandomMixin, ABC):
             self.observation_spaces[agent_name] = agent.observation_space['image']
 
         # state_spaces based on the FullyObsWrapper
-        # self.shared_observation_spaces = dict()
         self.state_spaces = dict()
         for agent_name in self.possible_agents:
             self.state_spaces[agent_name] = spaces.Box(
@@ -373,8 +372,8 @@ class MultiGridEnv(gym.Env, RandomMixin, ABC):
         if self.render_mode == 'human':
             self.render()
 
-        # if truncated or any(terminations.values()):
-            # print('MultiGirdEnv Step:', self.step_count, rewards, terminations, truncations)
+        if truncated or all(terminations.values()):
+            print('MultiGirdEnv Step:', self.step_count, rewards, terminations, truncations)
         return observations, rewards, terminations, truncations, defaultdict(dict)
 
     def gen_obs(self) -> dict[AgentID, ObsType]:
@@ -459,7 +458,6 @@ class MultiGridEnv(gym.Env, RandomMixin, ABC):
                     agent.state.pos = fwd_pos # move forward one step
                     if fwd_obj is not None:
                         if fwd_obj.type == Type.goal:
-                            # print('on_success:',  agent.index, agent.state.pos, fwd_obj.cur_pos)
                             self.on_success(agent, rewards, {})
                         if fwd_obj.type == Type.lava:
                             self.on_failure(agent, rewards, {})
@@ -551,7 +549,7 @@ class MultiGridEnv(gym.Env, RandomMixin, ABC):
             agent.state.terminated = True # terminate this agent only
             terminations[agent.index] = True
             self.terminiation_step[agent.index] = self.step_count
-            # print('on success termination: ',  agent.index, agent.state.terminated)
+            print('Agent termination: ',  agent.index)
 
 
         if self.joint_reward:
@@ -772,6 +770,8 @@ class MultiGridEnv(gym.Env, RandomMixin, ABC):
         highlight_mask = np.zeros((self.width, self.height), dtype=bool)
 
         for agent in self.agents:
+            if agent.state.terminated == True:
+                continue
             # Compute the world coordinates of the bottom-left corner
             # of the agent's view area
             f_vec = agent.state.dir.to_vec()
