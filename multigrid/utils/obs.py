@@ -101,6 +101,13 @@ def gen_obs_grid_encoding(
 
     return obs_grid
 
+#TODO
+@nb.njit(cache=True)
+def get_privileged_obs(obs_grid, obj_loc):
+    pass
+
+
+
 @nb.njit(cache=True)
 def gen_obs_grid_vis_mask(
     grid_state: ndarray[np.int_],

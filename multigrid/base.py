@@ -187,6 +187,7 @@ class MultiGridEnv(gym.Env, RandomMixin, ABC):
             agent_name = agent.index
             self.agent_dict[agent_name] = agent
             print('Agent', agent_name, agent.color)
+        print('maxsteps:', max_steps)
             
         self.possible_agents = list(self.agent_dict.keys())
         self.action_spaces = dict()
@@ -372,8 +373,8 @@ class MultiGridEnv(gym.Env, RandomMixin, ABC):
         if self.render_mode == 'human':
             self.render()
 
-        if truncated or all(terminations.values()):
-            print('MultiGirdEnv Step:', self.step_count, rewards, terminations, truncations)
+        # if truncated or all(terminations.values()):
+        #     print('MultiGirdEnv Step:', self.step_count, rewards, terminations, truncations)
         return observations, rewards, terminations, truncations, defaultdict(dict)
 
     def gen_obs(self) -> dict[AgentID, ObsType]:
@@ -510,18 +511,21 @@ class MultiGridEnv(gym.Env, RandomMixin, ABC):
     def custom_reward(self, agent):
         width, height  = self.grid.width, self.grid.height
         goal_pos = np.array(self.grid.obj_loc['Goal'][0])
+        fwd_pos = np.array(list( agent.front_pos))
         agent_pos = np.array(list(agent.state.pos))
         # Reward for moving closer to the goal
-        distance = np.linalg.norm(agent_pos - goal_pos)
-        if agent.state.terminated == False:
-            reward = -distance * 0.02 - 0.002 * self.step_count
-        else:
+        dist_curr = np.linalg.norm(agent_pos - goal_pos)
+        dist_fwd = np.linalg.norm(fwd_pos - goal_pos)
+
+        if agent.state.terminated == False:                
+            reward = -dist_curr * 0.02 - 0.002 * self.step_count
+            if dist_fwd < dist_curr:
+                reward += 0.05  # reward for facing the goal
+        else:            
             reward = - 0.002 * self.terminiation_step[agent.index]
         # Original success reward
-        if np.isclose(distance, 0, atol=1e-2):
+        if np.isclose(dist_curr, 0, atol=1e-2):
             reward += 2.0  # Original sparse reward
-            pos = agent.state.pos
-            # print('custom_reward success: ', self.step_count, agent.index, agent_pos, goal_pos, self.grid.get(*pos), reward)
         return reward
 
     def on_success(
