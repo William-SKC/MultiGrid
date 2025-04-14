@@ -93,7 +93,7 @@ class MultiGridEnv(gym.Env, RandomMixin, ABC):
         height: int | None = None,
         max_steps: int = 200,
         see_through_walls: bool = False,
-        agent_view_size: int = 7,
+        agent_view_size: int = 15,
         allow_agent_overlap: bool = True,
         joint_reward: bool = False,
         success_termination_mode: Literal['any', 'all'] = 'all',
@@ -553,7 +553,7 @@ class MultiGridEnv(gym.Env, RandomMixin, ABC):
             agent.state.terminated = True # terminate this agent only
             terminations[agent.index] = True
             self.terminiation_step[agent.index] = self.step_count
-            print('Agent termination: ',  agent.index)
+            print('Agent reach goal: ',  agent.index)
 
 
         if self.joint_reward:
