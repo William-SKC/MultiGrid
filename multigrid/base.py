@@ -431,9 +431,10 @@ class MultiGridEnv(gym.Env, RandomMixin, ABC):
 
         # Update agent states, grid states, and reward from actions
         for i in order:
-            agent, action = self.agents[i], actions[i]
-            
+            agent, action = self.agents[i], actions[i] 
+
             if agent.state.terminated:
+                rewards[agent.index] = self.custom_reward(agent) 
                 continue
 
             # Rotate left
@@ -501,8 +502,6 @@ class MultiGridEnv(gym.Env, RandomMixin, ABC):
             else:
                 raise ValueError(f"Unknown action: {action}")
             
-        for i in order:
-            agent, action = self.agents[i], actions[i]
             rewards[agent.index] = self.custom_reward(agent)    #Shengkang: reward shaping
 
         return rewards
@@ -525,7 +524,7 @@ class MultiGridEnv(gym.Env, RandomMixin, ABC):
             reward = - 0.002 * self.terminiation_step[agent.index]
         # Original success reward
         if np.isclose(dist_curr, 0, atol=1e-2):
-            reward += 2.0  # Original sparse reward
+            reward += 5.0  # Original sparse reward
         return reward
 
     def on_success(
@@ -545,6 +544,7 @@ class MultiGridEnv(gym.Env, RandomMixin, ABC):
         terminations : dict[AgentID, bool]
             Termination dictionary to be updated
         """
+        print('Suceess:', agent.index)
         if self.success_termination_mode == 'any':
             self.agent_states.terminated = True # terminate all agents
             for i in range(self.num_agents):
@@ -553,14 +553,13 @@ class MultiGridEnv(gym.Env, RandomMixin, ABC):
             agent.state.terminated = True # terminate this agent only
             terminations[agent.index] = True
             self.terminiation_step[agent.index] = self.step_count
-            print('Agent reach goal: ',  agent.index)
 
-
-        if self.joint_reward:
-            for i in range(self.num_agents):
-                rewards[i] = self._reward() # reward all agents
-        else:
-            rewards[agent.index] = self._reward() # reward this agent only
+        # Sparse Reward
+        # if self.joint_reward:
+        #     for i in range(self.num_agents):
+        #         rewards[i] = self._reward() # reward all agents
+        # else:
+        #     rewards[agent.index] = self._reward() # reward this agent only
 
     def on_failure(
         self,
