@@ -93,7 +93,7 @@ class MultiGridEnv(gym.Env, RandomMixin, ABC):
         height: int | None = None,
         max_steps: int = 200,
         see_through_walls: bool = False,
-        agent_view_size: int = 15,
+        agent_view_size: int = 11,
         allow_agent_overlap: bool = True,
         joint_reward: bool = False,
         success_termination_mode: Literal['any', 'all'] = 'all',
